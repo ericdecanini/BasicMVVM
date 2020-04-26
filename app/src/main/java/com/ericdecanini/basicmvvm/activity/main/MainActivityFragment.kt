@@ -7,20 +7,22 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import com.ericdecanini.basicmvvm.R
-import kotlinx.android.synthetic.main.fragment_main.*
+import com.ericdecanini.basicmvvm.databinding.FragmentMainBinding
 
 class MainActivityFragment: Fragment() {
 
     private val viewModel: MainActivityViewModel by activityViewModels()
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
-    }
+override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+): View {
+    _binding = FragmentMainBinding.inflate(inflater)
+    return binding.root
+}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -29,12 +31,17 @@ class MainActivityFragment: Fragment() {
     }
 
     private fun setupClickListeners() {
-        dogbreed_button.setOnClickListener { viewModel.getRandomDogBreed() }
+        binding.randomize.setOnClickListener { viewModel.getRandomDogBreed() }
     }
 
     private fun observeDogBreed() {
         viewModel.dogBreedLiveData.observe(viewLifecycleOwner, Observer { breed ->
-            dogbreed_textview.text = breed
+            binding.name.text = breed
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
